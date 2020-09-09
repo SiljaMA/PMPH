@@ -113,9 +113,8 @@ int main(int argc, char** argv){
 
         if(elapsed_gpu < elapsed_cpu){
             CPU_is_bigger = false; 
-        }else{
-            N++; 
         }
+        N = N +1; 
     }
 
 }
