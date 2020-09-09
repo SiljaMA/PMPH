@@ -66,11 +66,6 @@ int main(int argc, char** argv){
         squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
     }cudaThreadSynchronize(); 
 
-    gettimeofday(&t_diff, NULL); 
-    timeval_substract(&t_diff, &t_end, &t_start); 
-    elaped = (t_diff.tv_sec*1e6+t_diff.tv_usec)/GPU_RUNS; 
-    printf("Took %d microseconds (%.2fms)\n", elaped, elaped/1000.0);
-
     //copy result from device to host
     cudaMemcpy(h_out, d_out, mem_size, cudaMemcpyDeviceToHost);
 
@@ -90,6 +85,12 @@ int main(int argc, char** argv){
             printf("INVALID\n");
         }
     }
+
+    gettimeofday(&t_diff, NULL); 
+    timeval_substract(&t_diff, &t_end, &t_start); 
+    elaped = (t_diff.tv_sec*1e6+t_diff.tv_usec)/GPU_RUNS; 
+    printf("Took %d microseconds (%.2fms)\n", elaped, elaped/1000.0);
+
     
 
     //mål tiden 
