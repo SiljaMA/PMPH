@@ -16,6 +16,14 @@
 --    7
 -- }
 
+-- ==
+-- compiled input {
+--    [1i32, 1, 1, 2, 3, 0, 0, 0, 3, 4, -6, 1]
+-- }
+-- output {
+--    3
+-- }
+
 import "lssp-seq"
 import "lssp"
 
