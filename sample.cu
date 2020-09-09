@@ -9,7 +9,7 @@
 //skriv to funktioner, der begge mapper (x/(x-2.3))^3 til arrayet 
 //[1...753411]
 
-__global__ void squareSerial(float* d_in, float* d_out, int N){
+    void squareSerial(float* d_in, float* d_out, int N){
     int i; 
     for (i = 0; i < N; ++i){
         d_out[i] = pow(d_in[i]/(d_in[i]-2.3), 3);
@@ -67,9 +67,9 @@ int main(int argc, char** argv){
     int i; 
     for (i = 0; i < N; ++i){
         if(fabs(cpu_res[i] - h_out[i]) < 0.0001){
-            print("VALID");
+            printf("VALID");
         }else{
-            print("INVALID");
+            printf("INVALID");
         }
     }
     
