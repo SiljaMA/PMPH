@@ -26,17 +26,13 @@ let redOp (pred2 : int -> int -> bool)
     else max (lssx, lssy) 
 
   let newlis = -- længden af det længeste segment, der starter fra start
-    if connect then 
-      if tlx == lisx then 
-        tlx + lisy
-      else lisx 
+    if connect && tlx == lisx then 
+      tlx + lisy
     else lisx
   
   let newlcs = -- længden af det længeste segment, der starter fra slut 
-    if connect then  
-      if tly == lcsy then 
-        tly + lcsx
-      else lcsy
+    if connect && tly == lcsy then 
+      tly + lcsx
     else lcsy
 
 
