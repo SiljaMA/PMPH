@@ -6,9 +6,6 @@
 #include <cuda_runtime.h>
 
 
-//skriv to funktioner, der begge mapper (x/(x-2.3))^3 til arrayet 
-//[1...753411]
-
 void squareSerial(float* d_in, float* d_out, int N){
     for (unsigned int i = 0; i < N; ++i){
         d_out[i] = pow(d_in[i]/(d_in[i]-2.3), 3);
@@ -25,7 +22,7 @@ __global__ void squareKernel(float* d_in, float* d_out, int N){
 
 
 int main(int argc, char** argv){
-    unsigned int N = 32757; //størrelsen på arrayet
+    unsigned int N = 753411; //størrelsen på arrayet
     unsigned int mem_size = N*sizeof(float); //størrelsen på hukommelsen der skal bruges til arrayet
     unsigned int block_size = 256; //størrelsen på en block
     unsigned int num_blocks = ((N + (block_size -1))/block_size); //antallet af blocks
