@@ -5,6 +5,7 @@
 #include <math.h>
 #include <cuda_runtime.h>
 
+#define GPU_RUNS 100
 
 void squareSerial(float* d_in, float* d_out, int N){
     for (unsigned int i = 0; i < N; ++i){
@@ -36,6 +37,10 @@ int main(int argc, char** argv){
     unsigned int num_blocks = ((N + (block_size -1))/block_size); //antallet af blocks
 
 
+    //For measure the time 
+    unsigned long int elaped; struct timeval t_start, t_end, t_diff; 
+    gettimeofday(t_start, NULL); 
+
     //allocates host-memory
     float* h_in = (float*) malloc(mem_size);
     float* h_out = (float*) malloc(mem_size);
@@ -55,7 +60,14 @@ int main(int argc, char** argv){
     cudaMemcpy(d_in, h_in, mem_size, cudaMemcpyHostToDevice);
 
     //execute the kernel and calculates the square using gpu 
-    squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
+    for(int i = 0; i < GPU_RUNS; i++){
+        squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
+    }cudaThreadSynchronize(); 
+
+    gettimeofday(&t_diff, NULL); 
+    timeval_substract(&t_diff, &t_end, &t_start); 
+    elaped = (t_diff.tv_sec*1e6+t_diff.tv_usec)/GPU_RUNS; 
+    printf("Took %d microseconds (%.2fms)\n", elaped, elaped/1000.0);
 
     //copy result from device to host
     cudaMemcpy(h_out, d_out, mem_size, cudaMemcpyDeviceToHost);
