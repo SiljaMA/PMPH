@@ -6,15 +6,16 @@
 #include <cuda_runtime.h>
 #include <sys/time.h>
 #include <time.h> 
-
 #define GPU_RUNS 100
 
+//Calculates (x/x-2.3)^3 serial for every x in the array using the cpu
 void squareSerial(float* d_in, float* d_out, int N){
     for (unsigned int i = 0; i < N; ++i){
         d_out[i] = pow(d_in[i]/(d_in[i]-2.3), 3);
     }
 }
 
+//Calculates (x/x-2.3)^3 for every x in the array using the gpu
 __global__ void squareKernel(float* d_in, float* d_out, int N){
     const unsigned int lid = threadIdx.x; 
     const unsigned int gid = blockIdx.x*blockDim.x + lid; 
@@ -23,7 +24,7 @@ __global__ void squareKernel(float* d_in, float* d_out, int N){
     }
 }
 
-
+//Calculates the time different between two timevals
 int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval* t1){
     unsigned int resolution = 1000000; 
     long int diff = (t2 -> tv_usec + resolution * t2 -> tv_sec) - (t1 -> tv_usec + resolution * t1 -> tv_sec);
@@ -33,17 +34,18 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
 }
 
 int main(int argc, char** argv){
-    unsigned int N = 753411; //størrelsen på arrayet
-    unsigned int mem_size = N*sizeof(float); //størrelsen på hukommelsen der skal bruges til arrayet
-    unsigned int block_size = 256; //størrelsen på en block
-    unsigned int num_blocks = ((N + (block_size -1))/block_size); //antallet af blocks
+    unsigned int N = 753411; //skal vaierer på denne for at finde ud af hvornår gpuen bliver større
+    unsigned int mem_size = N*sizeof(float); 
+    unsigned int block_size = 256; 
+    unsigned int num_blocks = ((N + (block_size -1))/block_size); 
     //For measure the time 
     unsigned long int elapsed_gpu; struct timeval t_start_gpu, t_end_gpu, t_diff_gpu;  
     unsigned long int elapsed_cpu; struct timeval t_start_cpu, t_end_cpu, t_diff_cpu;  
 
-    //allocates host-memory
+    //allocates memory for the arrays
     float* h_in = (float*) malloc(mem_size);
-    float* h_out = (float*) malloc(mem_size);
+    float* gpu_res = (float*) malloc(mem_size);
+    float* cpu_res = (float*) malloc(mem_size);
 
     //initialize the memory
     for(unsigned int i = 0; i <N; ++i){
@@ -59,22 +61,21 @@ int main(int argc, char** argv){
     //copy host memory to device
     cudaMemcpy(d_in, h_in, mem_size, cudaMemcpyHostToDevice);
 
+    //starts the time for the gpu
     gettimeofday(&t_start_gpu, NULL); 
     //execute the kernel and calculates the square using gpu 
     squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
+    //ends the time for the gpu
     gettimeofday(&t_end_gpu, NULL); 
 
     //copy result from device to host
-    cudaMemcpy(h_out, d_out, mem_size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(gpu_res, d_out, mem_size, cudaMemcpyDeviceToHost);
 
-    //print result
-    //for(unsigned int i = 0; i <N; i++) printf("%.6f\n", h_out[i]);
-
-    float* cpu_res = (float*) malloc(mem_size);
-
+    //starts the time for cpu
     gettimeofday(&t_start_cpu, NULL); 
     //Calculates squareSerial using the cpu
     squareSerial(h_in, cpu_res, N); 
+    //ends the time for the cpu
     gettimeofday(&t_end_cpu, NULL); 
 
 
@@ -82,7 +83,7 @@ int main(int argc, char** argv){
     int valid, invalid;
     valid = invalid = 0; 
     for (unsigned int j = 0; j < N; ++j){
-        if(fabs(cpu_res[j] - h_out[j]) < 0.0001){
+        if(fabs(cpu_res[j] - gpu_res[j]) < 0.0001){
             valid++;
         }else{
             invalid++;
@@ -102,7 +103,8 @@ int main(int argc, char** argv){
 
     //clean-up memory
     free(h_in);
-    free(h_out);
+    free(cpu_res);
+    free(gpu_res)
     cudaFree(d_in);
     cudaFree(d_out);
 
