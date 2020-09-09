@@ -16,6 +16,13 @@
 --    7
 -- }
 
+-- compiled input {
+--    [1, -2, -2, -2, -2, -2, -2, 0, 3, 4, -6, 1]
+-- }
+-- output {
+--    6
+-- }
+
 import "lssp"
 import "lssp-seq"
 
