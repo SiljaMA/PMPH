@@ -9,8 +9,6 @@
 //skriv to funktioner, der begge mapper (x/(x-2.3))^3 til arrayet 
 //[1...753411]
 
-//Serial implementation for map, should run on the cpu
-//N is the size of the array 
 __global__ void squareSerial(float* d_in, float* d_out, int N){
     int i; 
     for (i = 0; i < N; ++i){
@@ -18,24 +16,20 @@ __global__ void squareSerial(float* d_in, float* d_out, int N){
     }
 }
 
-
-//den anden skal være en parallel map på gpuen 
-
-
 __global__ void squareKernel(float* d_in, float* d_out, int N){
     const unsigned int lid = threadIdx.x; 
     const unsigned int gid = blockIdx.x*blockDim.x + lid; 
-    d_out[gid] = d_in[gid]*d_in[gid];
+    if(gid < N){
+        d_out[gid] = pow(d_in[i]/(d_in[i]-2.3), 3);
+    }
 }
 
 
-
-
 int main(int argc, char** argv){
-    unsigned int N = 32757; //længden af arrayet
-    unsigned int mem_size = N*sizeof(float); //hvor meget hukommelse vi skal bruge
-    unsigned int block_size = 256; 
-    unsigned int num_blocks = ((N + (block_size -1))/block_size);
+    unsigned int N = 32757; //størrelsen på arrayet
+    unsigned int mem_size = N*sizeof(float); //størrelsen på hukommelsen der skal bruges til arrayet
+    unsigned int block_size = 256; //størrelsen på en block
+    unsigned int num_blocks = ((N + (block_size -1))/block_size); //antallet af blocks
 
 
     //allocates host-memory
@@ -56,14 +50,33 @@ int main(int argc, char** argv){
     //copy host memory to device
     cudaMemcpy(d_in, h_in, mem_size, cudaMemcpyHostToDevice);
 
-    //execute the kernel
+    //execute the kernel and calculates the square using gpu 
     squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
 
     //copy result from device to host
     cudaMemcpy(h_out, d_out, mem_size, cudaMemcpyDeviceToHost);
 
     //print result
-    for(unsigned int i = 0; i <N; i++) printf("%.6f\n", h_out[i]);
+    //for(unsigned int i = 0; i <N; i++) printf("%.6f\n", h_out[i]);
+
+    //Calculates squareSerial using the cpu
+    float* cpu_res = (float*) malloc(mem_size);
+    squareSerial(h_in, cpu_res, N); 
+
+    //Checks the results are the same
+    int i; 
+    for (i = 0; i < N; ++i){
+        if(fabs(cpu_res[i] - h_out[i]) < 0.0001){
+            print("VALID");
+        }else{
+            print("INVALID");
+        }
+    }
+    
+
+    //mål tiden 
+    //undersøg hvornår gpuen bliver hurtigere 
+
 
     //clean-up memory
     free(h_in);
