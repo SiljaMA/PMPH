@@ -6,12 +6,30 @@
 #include <cuda_runtime.h>
 
 
-//tager to arrays som input
+//skriv to funktioner, der begge mapper (x/(x-2.3))^3 til arrayet 
+//[1...753411]
+
+//Serial implementation for map, should run on the cpu
+//N is the size of the array 
+__global__ void squareSerial(float* d_in, float* d_out, int N){
+    int i; 
+    for (i = 0; i < N; ++i){
+        d_out[i] = pow(d_in[i]/(d_in[i]-2.3), 3);
+    }
+}
+
+
+//den anden skal være en parallel map på gpuen 
+
+
 __global__ void squareKernel(float* d_in, float* d_out, int N){
-    const unsigned int lid = threadIdx.x; //forstår ikke hvad linjen gør
-    const unsigned int gid = blockIdx.x*blockDim.x + lid; //forstår ikke hvad linjen gør
+    const unsigned int lid = threadIdx.x; 
+    const unsigned int gid = blockIdx.x*blockDim.x + lid; 
     d_out[gid] = d_in[gid]*d_in[gid];
 }
+
+
+
 
 int main(int argc, char** argv){
     unsigned int N = 32; //længden af arrayet
