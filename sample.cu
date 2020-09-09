@@ -66,9 +66,9 @@ int main(int argc, char** argv){
      
     for (unsigned int j = 0; j < N; ++j){
         if(fabs(cpu_res[j] - h_out[j]) < 0.0001){
-            printf("VALID");
+            printf("VALID \n");
         }else{
-            printf("INVALID");
+            printf("INVALID\n");
         }
     }
     
