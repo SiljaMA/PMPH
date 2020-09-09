@@ -4,6 +4,8 @@
 #include <string.h>
 #include <math.h>
 #include <cuda_runtime.h>
+#include <sys/time.h>
+#include <time.h> 
 
 #define GPU_RUNS 100
 
