@@ -19,7 +19,7 @@ __global__ void squareKernel(float* d_in, float* d_out, int N){
     const unsigned int lid = threadIdx.x; 
     const unsigned int gid = blockIdx.x*blockDim.x + lid; 
     if(gid < N){
-        d_out[gid] = pow(d_in[i]/(d_in[i]-2.3), 3);
+        d_out[gid] = pow(d_in[gid]/(d_in[gid]-2.3), 3);
     }
 }
 
