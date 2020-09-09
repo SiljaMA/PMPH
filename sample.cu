@@ -41,7 +41,7 @@ int main(int argc, char** argv){
 
     //For measure the time 
     unsigned long int elaped; struct timeval t_start, t_end, t_diff; 
-    gettimeofday(t_start, NULL); 
+    gettimeofday(&t_start, NULL); 
 
     //allocates host-memory
     float* h_in = (float*) malloc(mem_size);
