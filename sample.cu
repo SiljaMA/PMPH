@@ -75,17 +75,20 @@ int main(int argc, char** argv){
     gettimeofday(&t_start_cpu, NULL); 
     //Calculates squareSerial using the cpu
     squareSerial(h_in, cpu_res, N); 
-    gettimeofday(&t_start_cpu, NULL); 
+    gettimeofday(&t_end_cpu, NULL); 
 
 
-    //Checks the results are the same     
+    //Checks the results are the same    
+    int valid, invalid;
+    valid = invalid = 0; 
     for (unsigned int j = 0; j < N; ++j){
         if(fabs(cpu_res[j] - h_out[j]) < 0.0001){
-            printf("VALID \n");
+            valid++;
         }else{
-            printf("INVALID\n");
+            invalid++;
         }
     }
+    printf("Valid: %d, Invalid: %d", valid, invalid);
 
     //time for kernel gpu
     timeval_substract(&t_diff_gpu, &t_end_gpu, &t_start_gpu); 
