@@ -29,11 +29,15 @@ let redOp (pred2 : int -> int -> bool)
       if tlx == lisx then 
         tlx + lisy
       else lisx 
+    else lisx
   
-  let newlcs = if connect then  -- længden af det længeste segment, der starter fra slut 
-    if tly == lcsx then 
-      tly + lcsx
+  let newlcs = -- længden af det længeste segment, der starter fra slut 
+    if connect then  
+      if tly == lcsx then 
+        tly + lcsx
+      else lcsy
     else lcsy
+
 
   let newtl  = tlx + tly -- totale længde af listen 
   let first  = if tlx == 0 then firsty else firstx
