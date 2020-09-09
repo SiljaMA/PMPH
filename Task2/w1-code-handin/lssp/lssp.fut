@@ -21,7 +21,7 @@ let redOp (pred2 : int -> int -> bool)
   let connect= pred2 firstx firsty -- en bool der fortæller vi kan samle de to lister eller ej 
   
   let newlss = if connect then -- længden på det nye længest segment
-    max((max(lssx, lssy)), lcsx + lisy)) 
+    max((max(lssx, lssy)), lcsx + lisy) 
     else max (lssx, lssy) 
 
   let newlis = -- længden af det længeste segment, der starter fra start
