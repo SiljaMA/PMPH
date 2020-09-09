@@ -10,8 +10,7 @@
 //[1...753411]
 
 void squareSerial(float* d_in, float* d_out, int N){
-    int i; 
-    for (i = 0; i < N; ++i){
+    for (unsigned int i = 0; i < N; ++i){
         d_out[i] = pow(d_in[i]/(d_in[i]-2.3), 3);
     }
 }
@@ -64,9 +63,9 @@ int main(int argc, char** argv){
     squareSerial(h_in, cpu_res, N); 
 
     //Checks the results are the same
-    int i; 
-    for (i = 0; i < N; ++i){
-        if(fabs(cpu_res[i] - h_out[i]) < 0.0001){
+     
+    for (unsigned int j = 0; j < N; ++j){
+        if(fabs(cpu_res[j] - h_out[j]) < 0.0001){
             printf("VALID");
         }else{
             printf("INVALID");
