@@ -104,7 +104,7 @@ int main(int argc, char** argv){
     //clean-up memory
     free(h_in);
     free(cpu_res);
-    free(gpu_res)
+    free(gpu_res); 
     cudaFree(d_in);
     cudaFree(d_out);
 
