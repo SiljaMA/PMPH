@@ -34,7 +34,7 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
 }
 
 int main(int argc, char** argv){
-    unsigned int N = 753411; //skal vaierer på denne for at finde ud af hvornår gpuen bliver større
+    unsigned int N = 1; //skal vaierer på denne for at finde ud af hvornår gpuen bliver større
     unsigned int mem_size = N*sizeof(float); 
     unsigned int block_size = 256; 
     unsigned int num_blocks = ((N + (block_size -1))/block_size); 
@@ -111,8 +111,10 @@ int main(int argc, char** argv){
         cudaFree(d_in);
         cudaFree(d_out);
 
-        if(elapsed_cpu < elapsed_gpu){
+        if(elapsed_gpu < elapsed_cpu){
             CPU_is_bigger = false; 
+        }else{
+            N++; 
         }
     }
 
