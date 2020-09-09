@@ -33,7 +33,7 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
     return (diff <0); 
 }
 
-int main(int argc, char** argv[]){
+int main(int argc, char *argv[]){
     unsigned int N; //skal vaierer på denne for at finde ud af hvornår gpuen bliver større
     if(argc != 2){
         printf("Missing value for N"); 
