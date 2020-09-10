@@ -99,6 +99,11 @@ let spMatVctMult [num_elms] [vct_len] [num_rows]
                  (vct : [vct_len]f32) : [num_rows]f32 =
 
   let shp_sc   = scan (+) 0 mat_shp
+  -- Flagarray: 
+  let zero_arr = replicate num_elms 0 
+  --let one_arr = replicate num_rows 1
+  let flagArray = scatter zero_arr shp_sc mat_shp -- skriver det element, der skal ganges med hver række på det index, der svarer til start-indexet 
+  let multiply = 
   -- ... continue here ...
   in  replicate num_rows 0.0f32
 
