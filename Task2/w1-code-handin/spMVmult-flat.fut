@@ -103,9 +103,9 @@ let spMatVctMult [num_elms] [vct_len] [num_rows]
   let zero_arr = replicate num_elms 0 
   let one_arr = replicate num_rows 1
   let flag_arr = scatter zero_arr shp one_arr 
-  let multiply_arr = map (\(i, val) -> val*vct[i]) mat_val
+  let multiply_arr = map (\(i, v) -> v * vct[i] ) mat_val
   let seg_arr = sgmSumF32 flag_arr multiply_arr
-  in res = map(\i -> seg_arr[i-1]) shp_sc
+  in map (\i -> seg_arr[i-1]) shp_sc
 
 
 -- One may run with for example:
