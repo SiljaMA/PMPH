@@ -36,7 +36,7 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
 int main(int argc, char *argv[]){
     unsigned int N; //sæt tilbage til 753411
     if(argc != 2){
-        printf("Missing value for N"); 
+        printf("Missing value for N \n"); 
         N = 753411;
     }else {
         N = atoi(argv[1]); 
