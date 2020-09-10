@@ -99,13 +99,13 @@ let spMatVctMult [num_elms] [vct_len] [num_rows]
                  (vct : [vct_len]f32) : [num_rows]f32 =
 
   let shp_sc   = scan (+) 0 mat_shp
-  -- Flagarray: 
+  let shp = map(\i -> if i == 0 then 0 else shp_sc[i -1]) (iota num_rows)
   let zero_arr = replicate num_elms 0 
-  --let one_arr = replicate num_rows 1
-  let flagArray = scatter zero_arr shp_sc mat_shp -- skriver det element, der skal ganges med hver række på det index, der svarer til start-indexet 
-  let multiply = 
-  -- ... continue here ...
-  in  replicate num_rows 0.0f32
+  let one_arr = replicate num_rows 1
+  let flag_arr = scatter zero_arr shp one_arr 
+  let multiply_arr = map (\(i, val) -> val*vct[i]) mat_val
+  let seg_arr = sgmSumF32 flag_arr multiply_arr
+  in res = map(\i -> seg_arr[i-1]) shp_sc
 
 
 -- One may run with for example:
