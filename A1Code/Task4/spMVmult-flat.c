@@ -32,12 +32,46 @@ void futhark_context_free(struct futhark_context *ctx);
 
 // Arrays
 
+struct futhark_f32_1d ;
+struct futhark_f32_1d *futhark_new_f32_1d(struct futhark_context *ctx, const
+                                          float *data, int64_t dim0);
+struct futhark_f32_1d *futhark_new_raw_f32_1d(struct futhark_context *ctx, const
+                                              char *data, int offset,
+                                              int64_t dim0);
+int futhark_free_f32_1d(struct futhark_context *ctx,
+                        struct futhark_f32_1d *arr);
+int futhark_values_f32_1d(struct futhark_context *ctx,
+                          struct futhark_f32_1d *arr, float *data);
+char *futhark_values_raw_f32_1d(struct futhark_context *ctx,
+                                struct futhark_f32_1d *arr);
+const int64_t *futhark_shape_f32_1d(struct futhark_context *ctx,
+                                    struct futhark_f32_1d *arr);
+struct futhark_i32_1d ;
+struct futhark_i32_1d *futhark_new_i32_1d(struct futhark_context *ctx, const
+                                          int32_t *data, int64_t dim0);
+struct futhark_i32_1d *futhark_new_raw_i32_1d(struct futhark_context *ctx, const
+                                              char *data, int offset,
+                                              int64_t dim0);
+int futhark_free_i32_1d(struct futhark_context *ctx,
+                        struct futhark_i32_1d *arr);
+int futhark_values_i32_1d(struct futhark_context *ctx,
+                          struct futhark_i32_1d *arr, int32_t *data);
+char *futhark_values_raw_i32_1d(struct futhark_context *ctx,
+                                struct futhark_i32_1d *arr);
+const int64_t *futhark_shape_i32_1d(struct futhark_context *ctx,
+                                    struct futhark_i32_1d *arr);
 
 // Opaque values
 
 
 // Entry points
 
+int futhark_entry_main(struct futhark_context *ctx,
+                       struct futhark_f32_1d **out0, const
+                       struct futhark_i32_1d *in0, const
+                       struct futhark_f32_1d *in1, const
+                       struct futhark_i32_1d *in2, const
+                       struct futhark_f32_1d *in3);
 
 // Miscellaneous
 
@@ -1072,6 +1106,171 @@ int parse_options(struct futhark_context_config *cfg, int argc,
     }
     return optind;
 }
+static void futrts_cli_entry_main(struct futhark_context *ctx)
+{
+    int64_t t_start, t_end;
+    int time_runs = 0, profile_run = 0;
+    
+    // We do not want to profile all the initialisation.
+    futhark_context_pause_profiling(ctx);
+    // Declare and read input.
+    set_binary_mode(stdin);
+    
+    struct futhark_i32_1d *read_value_5130;
+    int64_t read_shape_5131[1];
+    int32_t *read_arr_5132 = NULL;
+    
+    errno = 0;
+    if (read_array(&i32_info, (void **) &read_arr_5132, read_shape_5131, 1) !=
+        0)
+        futhark_panic(1, "Cannot read input #%d of type %s%s (errno: %s).\n", 0,
+                      "[]", i32_info.type_name, strerror(errno));
+    
+    struct futhark_f32_1d *read_value_5133;
+    int64_t read_shape_5134[1];
+    float *read_arr_5135 = NULL;
+    
+    errno = 0;
+    if (read_array(&f32_info, (void **) &read_arr_5135, read_shape_5134, 1) !=
+        0)
+        futhark_panic(1, "Cannot read input #%d of type %s%s (errno: %s).\n", 1,
+                      "[]", f32_info.type_name, strerror(errno));
+    
+    struct futhark_i32_1d *read_value_5136;
+    int64_t read_shape_5137[1];
+    int32_t *read_arr_5138 = NULL;
+    
+    errno = 0;
+    if (read_array(&i32_info, (void **) &read_arr_5138, read_shape_5137, 1) !=
+        0)
+        futhark_panic(1, "Cannot read input #%d of type %s%s (errno: %s).\n", 2,
+                      "[]", i32_info.type_name, strerror(errno));
+    
+    struct futhark_f32_1d *read_value_5139;
+    int64_t read_shape_5140[1];
+    float *read_arr_5141 = NULL;
+    
+    errno = 0;
+    if (read_array(&f32_info, (void **) &read_arr_5141, read_shape_5140, 1) !=
+        0)
+        futhark_panic(1, "Cannot read input #%d of type %s%s (errno: %s).\n", 3,
+                      "[]", f32_info.type_name, strerror(errno));
+    if (end_of_input() != 0)
+        futhark_panic(1, "Expected EOF on stdin after reading input for %s.\n",
+                      "\"main\"");
+    
+    struct futhark_f32_1d *result_5142;
+    
+    if (perform_warmup) {
+        int r;
+        
+        assert((read_value_5130 = futhark_new_i32_1d(ctx, read_arr_5132,
+                                                     read_shape_5131[0])) != 0);
+        assert((read_value_5133 = futhark_new_f32_1d(ctx, read_arr_5135,
+                                                     read_shape_5134[0])) != 0);
+        assert((read_value_5136 = futhark_new_i32_1d(ctx, read_arr_5138,
+                                                     read_shape_5137[0])) != 0);
+        assert((read_value_5139 = futhark_new_f32_1d(ctx, read_arr_5141,
+                                                     read_shape_5140[0])) != 0);
+        if (futhark_context_sync(ctx) != 0)
+            futhark_panic(1, "%s", futhark_context_get_error(ctx));
+        ;
+        // Only profile last run.
+        if (profile_run)
+            futhark_context_unpause_profiling(ctx);
+        t_start = get_wall_time();
+        r = futhark_entry_main(ctx, &result_5142, read_value_5130,
+                               read_value_5133, read_value_5136,
+                               read_value_5139);
+        if (r != 0)
+            futhark_panic(1, "%s", futhark_context_get_error(ctx));
+        if (futhark_context_sync(ctx) != 0)
+            futhark_panic(1, "%s", futhark_context_get_error(ctx));
+        ;
+        if (profile_run)
+            futhark_context_pause_profiling(ctx);
+        t_end = get_wall_time();
+        
+        long elapsed_usec = t_end - t_start;
+        
+        if (time_runs && runtime_file != NULL) {
+            fprintf(runtime_file, "%lld\n", (long long) elapsed_usec);
+            fflush(runtime_file);
+        }
+        assert(futhark_free_i32_1d(ctx, read_value_5130) == 0);
+        assert(futhark_free_f32_1d(ctx, read_value_5133) == 0);
+        assert(futhark_free_i32_1d(ctx, read_value_5136) == 0);
+        assert(futhark_free_f32_1d(ctx, read_value_5139) == 0);
+        assert(futhark_free_f32_1d(ctx, result_5142) == 0);
+    }
+    time_runs = 1;
+    // Proper run.
+    for (int run = 0; run < num_runs; run++) {
+        // Only profile last run.
+        profile_run = run == num_runs - 1;
+        
+        int r;
+        
+        assert((read_value_5130 = futhark_new_i32_1d(ctx, read_arr_5132,
+                                                     read_shape_5131[0])) != 0);
+        assert((read_value_5133 = futhark_new_f32_1d(ctx, read_arr_5135,
+                                                     read_shape_5134[0])) != 0);
+        assert((read_value_5136 = futhark_new_i32_1d(ctx, read_arr_5138,
+                                                     read_shape_5137[0])) != 0);
+        assert((read_value_5139 = futhark_new_f32_1d(ctx, read_arr_5141,
+                                                     read_shape_5140[0])) != 0);
+        if (futhark_context_sync(ctx) != 0)
+            futhark_panic(1, "%s", futhark_context_get_error(ctx));
+        ;
+        // Only profile last run.
+        if (profile_run)
+            futhark_context_unpause_profiling(ctx);
+        t_start = get_wall_time();
+        r = futhark_entry_main(ctx, &result_5142, read_value_5130,
+                               read_value_5133, read_value_5136,
+                               read_value_5139);
+        if (r != 0)
+            futhark_panic(1, "%s", futhark_context_get_error(ctx));
+        if (futhark_context_sync(ctx) != 0)
+            futhark_panic(1, "%s", futhark_context_get_error(ctx));
+        ;
+        if (profile_run)
+            futhark_context_pause_profiling(ctx);
+        t_end = get_wall_time();
+        
+        long elapsed_usec = t_end - t_start;
+        
+        if (time_runs && runtime_file != NULL) {
+            fprintf(runtime_file, "%lld\n", (long long) elapsed_usec);
+            fflush(runtime_file);
+        }
+        assert(futhark_free_i32_1d(ctx, read_value_5130) == 0);
+        assert(futhark_free_f32_1d(ctx, read_value_5133) == 0);
+        assert(futhark_free_i32_1d(ctx, read_value_5136) == 0);
+        assert(futhark_free_f32_1d(ctx, read_value_5139) == 0);
+        if (run < num_runs - 1) {
+            assert(futhark_free_f32_1d(ctx, result_5142) == 0);
+        }
+    }
+    free(read_arr_5132);
+    free(read_arr_5135);
+    free(read_arr_5138);
+    free(read_arr_5141);
+    if (binary_output)
+        set_binary_mode(stdout);
+    {
+        float *arr = calloc(sizeof(float), futhark_shape_f32_1d(ctx,
+                                                                result_5142)[0]);
+        
+        assert(arr != NULL);
+        assert(futhark_values_f32_1d(ctx, result_5142, arr) == 0);
+        write_array(stdout, binary_output, &f32_info, arr,
+                    futhark_shape_f32_1d(ctx, result_5142), 1);
+        free(arr);
+    }
+    printf("\n");
+    assert(futhark_free_f32_1d(ctx, result_5142) == 0);
+}
 typedef void entry_point_fun(struct futhark_context *);
 struct entry_point_entry {
     const char *name;
@@ -1081,7 +1280,8 @@ int main(int argc, char **argv)
 {
     fut_progname = argv[0];
     
-    struct entry_point_entry entry_points[] = {};
+    struct entry_point_entry entry_points[] = {{.name ="main", .fun =
+                                                futrts_cli_entry_main}};
     struct futhark_context_config *cfg = futhark_context_config_new();
     
     assert(cfg != NULL);
@@ -1154,7 +1354,7 @@ int main(int argc, char **argv)
 
 typedef HANDLE lock_t;
 
-static lock_t create_lock(lock_t *lock) {
+static void create_lock(lock_t *lock) {
   *lock = CreateMutex(NULL,  // Default security attributes.
                       FALSE, // Initially unlocked.
                       NULL); // Unnamed.
@@ -2901,6 +3101,14 @@ void futhark_context_unpause_profiling(struct futhark_context *ctx)
 {
     ctx->profiling_paused = 0;
 }
+static int futrts_main(struct futhark_context *ctx,
+                       struct memblock *out_mem_p_5124,
+                       int32_t *out_out_arrsizze_5125,
+                       struct memblock mat_inds_mem_5047,
+                       struct memblock mat_vals_mem_5048,
+                       struct memblock shp_mem_5049,
+                       struct memblock vct_mem_5050, int32_t n_4958,
+                       int32_t n_4959, int32_t m_4960, int32_t implz2080U_4961);
 int init_constants(struct futhark_context *ctx)
 {
     (void) ctx;
@@ -2915,4 +3123,419 @@ int free_constants(struct futhark_context *ctx)
 {
     (void) ctx;
     return 0;
+}
+static int futrts_main(struct futhark_context *ctx,
+                       struct memblock *out_mem_p_5124,
+                       int32_t *out_out_arrsizze_5125,
+                       struct memblock mat_inds_mem_5047,
+                       struct memblock mat_vals_mem_5048,
+                       struct memblock shp_mem_5049,
+                       struct memblock vct_mem_5050, int32_t n_4958,
+                       int32_t n_4959, int32_t m_4960, int32_t implz2080U_4961)
+{
+    (void) ctx;
+    
+    int err = 0;
+    size_t mem_5053_cached_sizze_5126 = 0;
+    char *mem_5053 = NULL;
+    size_t mem_5068_cached_sizze_5127 = 0;
+    char *mem_5068 = NULL;
+    size_t mem_5083_cached_sizze_5128 = 0;
+    char *mem_5083 = NULL;
+    size_t mem_5098_cached_sizze_5129 = 0;
+    char *mem_5098 = NULL;
+    struct memblock out_mem_5115;
+    
+    out_mem_5115.references = NULL;
+    
+    int32_t out_arrsizze_5116;
+    bool dim_match_4966 = n_4958 == n_4959;
+    bool empty_or_match_cert_4967;
+    
+    if (!dim_match_4966) {
+        ctx->error = msgprintf("Error: %s\n\nBacktrace:\n%s",
+                               "function arguments of wrong shape",
+                               "-> #0  spMVmult-flat.fut:113:1-116:46\n");
+        if (memblock_unref(ctx, &out_mem_5115, "out_mem_5115") != 0)
+            return 1;
+        return 1;
+    }
+    
+    int64_t binop_x_5052 = sext_i32_i64(m_4960);
+    int64_t bytes_5051 = 4 * binop_x_5052;
+    
+    if (mem_5053_cached_sizze_5126 < (size_t) bytes_5051) {
+        mem_5053 = realloc(mem_5053, bytes_5051);
+        mem_5053_cached_sizze_5126 = bytes_5051;
+    }
+    
+    int32_t discard_5018;
+    int32_t scanacc_5014 = 0;
+    
+    for (int32_t i_5016 = 0; i_5016 < m_4960; i_5016++) {
+        int32_t x_4972 = ((int32_t *) shp_mem_5049.mem)[sext_i32_i64(i_5016)];
+        int32_t res_4971 = add32(x_4972, scanacc_5014);
+        
+        ((int32_t *) mem_5053)[sext_i32_i64(i_5016)] = res_4971;
+        
+        int32_t scanacc_tmp_5117 = res_4971;
+        
+        scanacc_5014 = scanacc_tmp_5117;
+    }
+    discard_5018 = scanacc_5014;
+    
+    int64_t binop_x_5067 = sext_i32_i64(n_4958);
+    int64_t bytes_5066 = 4 * binop_x_5067;
+    
+    if (mem_5068_cached_sizze_5127 < (size_t) bytes_5066) {
+        mem_5068 = realloc(mem_5068, bytes_5066);
+        mem_5068_cached_sizze_5127 = bytes_5066;
+    }
+    for (int32_t i_5119 = 0; i_5119 < n_4958; i_5119++) {
+        ((int32_t *) mem_5068)[sext_i32_i64(i_5119)] = 0;
+    }
+    for (int32_t write_iter_5019 = 0; write_iter_5019 < m_4960;
+         write_iter_5019++) {
+        bool cond_4977 = write_iter_5019 == 0;
+        int32_t res_4978;
+        
+        if (cond_4977) {
+            res_4978 = 0;
+        } else {
+            int32_t i_4979 = sub32(write_iter_5019, 1);
+            bool x_4980 = sle32(0, i_4979);
+            bool y_4981 = slt32(i_4979, m_4960);
+            bool bounds_check_4982 = x_4980 && y_4981;
+            bool index_certs_4983;
+            
+            if (!bounds_check_4982) {
+                ctx->error = msgprintf("Error: %s%d%s%d%s\n\nBacktrace:\n%s",
+                                       "Index [", i_4979,
+                                       "] out of bounds for array of shape [",
+                                       m_4960, "].",
+                                       "-> #0  spMVmult-flat.fut:102:45-56\n   #1  spMVmult-flat.fut:102:13-73\n   #2  spMVmult-flat.fut:116:3-46\n   #3  spMVmult-flat.fut:113:1-116:46\n");
+                if (memblock_unref(ctx, &out_mem_5115, "out_mem_5115") != 0)
+                    return 1;
+                return 1;
+            }
+            
+            int32_t res_4984 = ((int32_t *) mem_5053)[sext_i32_i64(i_4979)];
+            
+            res_4978 = res_4984;
+        }
+        
+        bool less_than_zzero_5022 = slt32(res_4978, 0);
+        bool greater_than_sizze_5023 = sle32(n_4958, res_4978);
+        bool outside_bounds_dim_5024 = less_than_zzero_5022 ||
+             greater_than_sizze_5023;
+        
+        if (!outside_bounds_dim_5024) {
+            ((int32_t *) mem_5068)[sext_i32_i64(res_4978)] = 1;
+        }
+    }
+    if (mem_5083_cached_sizze_5128 < (size_t) bytes_5066) {
+        mem_5083 = realloc(mem_5083, bytes_5066);
+        mem_5083_cached_sizze_5128 = bytes_5066;
+    }
+    
+    float discard_5038;
+    float scanacc_5031 = 0.0F;
+    
+    for (int32_t i_5034 = 0; i_5034 < n_4958; i_5034++) {
+        int32_t x_4996 =
+                ((int32_t *) mat_inds_mem_5047.mem)[sext_i32_i64(i_5034)];
+        float x_4997 = ((float *) mat_vals_mem_5048.mem)[sext_i32_i64(i_5034)];
+        int32_t x_4998 = ((int32_t *) mem_5068)[sext_i32_i64(i_5034)];
+        bool x_4999 = sle32(0, x_4996);
+        bool y_5000 = slt32(x_4996, implz2080U_4961);
+        bool bounds_check_5001 = x_4999 && y_5000;
+        bool index_certs_5002;
+        
+        if (!bounds_check_5001) {
+            ctx->error = msgprintf("Error: %s%d%s%d%s\n\nBacktrace:\n%s",
+                                   "Index [", x_4996,
+                                   "] out of bounds for array of shape [",
+                                   implz2080U_4961, "].",
+                                   "-> #0  spMVmult-flat.fut:106:42-47\n   #1  spMVmult-flat.fut:106:22-57\n   #2  spMVmult-flat.fut:116:3-46\n   #3  spMVmult-flat.fut:113:1-116:46\n");
+            if (memblock_unref(ctx, &out_mem_5115, "out_mem_5115") != 0)
+                return 1;
+            return 1;
+        }
+        
+        float y_5003 = ((float *) vct_mem_5050.mem)[sext_i32_i64(x_4996)];
+        float res_5004 = x_4997 * y_5003;
+        bool cond_4993 = slt32(0, x_4998);
+        float res_4994;
+        
+        if (cond_4993) {
+            res_4994 = res_5004;
+        } else {
+            float res_4995 = res_5004 + scanacc_5031;
+            
+            res_4994 = res_4995;
+        }
+        ((float *) mem_5083)[sext_i32_i64(i_5034)] = res_4994;
+        
+        float scanacc_tmp_5121 = res_4994;
+        
+        scanacc_5031 = scanacc_tmp_5121;
+    }
+    discard_5038 = scanacc_5031;
+    if (mem_5098_cached_sizze_5129 < (size_t) bytes_5051) {
+        mem_5098 = realloc(mem_5098, bytes_5051);
+        mem_5098_cached_sizze_5129 = bytes_5051;
+    }
+    for (int32_t i_5041 = 0; i_5041 < m_4960; i_5041++) {
+        int32_t x_5006 = ((int32_t *) mem_5053)[sext_i32_i64(i_5041)];
+        int32_t i_5007 = sub32(x_5006, 1);
+        bool x_5008 = sle32(0, i_5007);
+        bool y_5009 = slt32(i_5007, n_4958);
+        bool bounds_check_5010 = x_5008 && y_5009;
+        bool index_certs_5011;
+        
+        if (!bounds_check_5010) {
+            ctx->error = msgprintf("Error: %s%d%s%d%s\n\nBacktrace:\n%s",
+                                   "Index [", i_5007,
+                                   "] out of bounds for array of shape [",
+                                   n_4958, "].",
+                                   "-> #0  spMVmult-flat.fut:108:17-28\n   #1  spMVmult-flat.fut:108:6-36\n   #2  spMVmult-flat.fut:116:3-46\n   #3  spMVmult-flat.fut:113:1-116:46\n");
+            if (memblock_unref(ctx, &out_mem_5115, "out_mem_5115") != 0)
+                return 1;
+            return 1;
+        }
+        memmove(mem_5098 + sext_i32_i64(i_5041) * 4, mem_5083 +
+                sext_i32_i64(i_5007) * 4, (int64_t) sizeof(float));
+    }
+    
+    struct memblock mem_5113;
+    
+    mem_5113.references = NULL;
+    if (memblock_alloc(ctx, &mem_5113, bytes_5051, "mem_5113")) {
+        err = 1;
+        goto cleanup;
+    }
+    memmove(mem_5113.mem + 0, mem_5098 + 0, sext_i32_i64(m_4960) *
+            (int64_t) sizeof(float));
+    out_arrsizze_5116 = m_4960;
+    if (memblock_set(ctx, &out_mem_5115, &mem_5113, "mem_5113") != 0)
+        return 1;
+    (*out_mem_p_5124).references = NULL;
+    if (memblock_set(ctx, &*out_mem_p_5124, &out_mem_5115, "out_mem_5115") != 0)
+        return 1;
+    *out_out_arrsizze_5125 = out_arrsizze_5116;
+    if (memblock_unref(ctx, &mem_5113, "mem_5113") != 0)
+        return 1;
+    if (memblock_unref(ctx, &out_mem_5115, "out_mem_5115") != 0)
+        return 1;
+    
+  cleanup:
+    { }
+    free(mem_5053);
+    free(mem_5068);
+    free(mem_5083);
+    free(mem_5098);
+    return err;
+}
+struct futhark_f32_1d {
+    struct memblock mem;
+    int64_t shape[1];
+} ;
+struct futhark_f32_1d *futhark_new_f32_1d(struct futhark_context *ctx, const
+                                          float *data, int64_t dim0)
+{
+    struct futhark_f32_1d *bad = NULL;
+    struct futhark_f32_1d *arr =
+                          (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, (size_t) dim0 * sizeof(float),
+                       "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    memmove(arr->mem.mem + 0, data + 0, (size_t) dim0 * sizeof(float));
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+struct futhark_f32_1d *futhark_new_raw_f32_1d(struct futhark_context *ctx, const
+                                              char *data, int offset,
+                                              int64_t dim0)
+{
+    struct futhark_f32_1d *bad = NULL;
+    struct futhark_f32_1d *arr =
+                          (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, (size_t) dim0 * sizeof(float),
+                       "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    memmove(arr->mem.mem + 0, data + offset, (size_t) dim0 * sizeof(float));
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+int futhark_free_f32_1d(struct futhark_context *ctx, struct futhark_f32_1d *arr)
+{
+    lock_lock(&ctx->lock);
+    if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
+        return 1;
+    lock_unlock(&ctx->lock);
+    free(arr);
+    return 0;
+}
+int futhark_values_f32_1d(struct futhark_context *ctx,
+                          struct futhark_f32_1d *arr, float *data)
+{
+    lock_lock(&ctx->lock);
+    memmove(data + 0, arr->mem.mem + 0, (size_t) arr->shape[0] * sizeof(float));
+    lock_unlock(&ctx->lock);
+    return 0;
+}
+char *futhark_values_raw_f32_1d(struct futhark_context *ctx,
+                                struct futhark_f32_1d *arr)
+{
+    (void) ctx;
+    return arr->mem.mem;
+}
+const int64_t *futhark_shape_f32_1d(struct futhark_context *ctx,
+                                    struct futhark_f32_1d *arr)
+{
+    (void) ctx;
+    return arr->shape;
+}
+struct futhark_i32_1d {
+    struct memblock mem;
+    int64_t shape[1];
+} ;
+struct futhark_i32_1d *futhark_new_i32_1d(struct futhark_context *ctx, const
+                                          int32_t *data, int64_t dim0)
+{
+    struct futhark_i32_1d *bad = NULL;
+    struct futhark_i32_1d *arr =
+                          (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, (size_t) dim0 * sizeof(int32_t),
+                       "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    memmove(arr->mem.mem + 0, data + 0, (size_t) dim0 * sizeof(int32_t));
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+struct futhark_i32_1d *futhark_new_raw_i32_1d(struct futhark_context *ctx, const
+                                              char *data, int offset,
+                                              int64_t dim0)
+{
+    struct futhark_i32_1d *bad = NULL;
+    struct futhark_i32_1d *arr =
+                          (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d));
+    
+    if (arr == NULL)
+        return bad;
+    lock_lock(&ctx->lock);
+    arr->mem.references = NULL;
+    if (memblock_alloc(ctx, &arr->mem, (size_t) dim0 * sizeof(int32_t),
+                       "arr->mem"))
+        return NULL;
+    arr->shape[0] = dim0;
+    memmove(arr->mem.mem + 0, data + offset, (size_t) dim0 * sizeof(int32_t));
+    lock_unlock(&ctx->lock);
+    return arr;
+}
+int futhark_free_i32_1d(struct futhark_context *ctx, struct futhark_i32_1d *arr)
+{
+    lock_lock(&ctx->lock);
+    if (memblock_unref(ctx, &arr->mem, "arr->mem") != 0)
+        return 1;
+    lock_unlock(&ctx->lock);
+    free(arr);
+    return 0;
+}
+int futhark_values_i32_1d(struct futhark_context *ctx,
+                          struct futhark_i32_1d *arr, int32_t *data)
+{
+    lock_lock(&ctx->lock);
+    memmove(data + 0, arr->mem.mem + 0, (size_t) arr->shape[0] *
+            sizeof(int32_t));
+    lock_unlock(&ctx->lock);
+    return 0;
+}
+char *futhark_values_raw_i32_1d(struct futhark_context *ctx,
+                                struct futhark_i32_1d *arr)
+{
+    (void) ctx;
+    return arr->mem.mem;
+}
+const int64_t *futhark_shape_i32_1d(struct futhark_context *ctx,
+                                    struct futhark_i32_1d *arr)
+{
+    (void) ctx;
+    return arr->shape;
+}
+int futhark_entry_main(struct futhark_context *ctx,
+                       struct futhark_f32_1d **out0, const
+                       struct futhark_i32_1d *in0, const
+                       struct futhark_f32_1d *in1, const
+                       struct futhark_i32_1d *in2, const
+                       struct futhark_f32_1d *in3)
+{
+    struct memblock mat_inds_mem_5047;
+    
+    mat_inds_mem_5047.references = NULL;
+    
+    struct memblock mat_vals_mem_5048;
+    
+    mat_vals_mem_5048.references = NULL;
+    
+    struct memblock shp_mem_5049;
+    
+    shp_mem_5049.references = NULL;
+    
+    struct memblock vct_mem_5050;
+    
+    vct_mem_5050.references = NULL;
+    
+    int32_t n_4958;
+    int32_t n_4959;
+    int32_t m_4960;
+    int32_t implz2080U_4961;
+    struct memblock out_mem_5115;
+    
+    out_mem_5115.references = NULL;
+    
+    int32_t out_arrsizze_5116;
+    
+    lock_lock(&ctx->lock);
+    mat_inds_mem_5047 = in0->mem;
+    n_4958 = in0->shape[0];
+    mat_vals_mem_5048 = in1->mem;
+    n_4959 = in1->shape[0];
+    shp_mem_5049 = in2->mem;
+    m_4960 = in2->shape[0];
+    vct_mem_5050 = in3->mem;
+    implz2080U_4961 = in3->shape[0];
+    
+    int ret = futrts_main(ctx, &out_mem_5115, &out_arrsizze_5116,
+                          mat_inds_mem_5047, mat_vals_mem_5048, shp_mem_5049,
+                          vct_mem_5050, n_4958, n_4959, m_4960,
+                          implz2080U_4961);
+    
+    if (ret == 0) {
+        assert((*out0 =
+                (struct futhark_f32_1d *) malloc(sizeof(struct futhark_f32_1d))) !=
+            NULL);
+        (*out0)->mem = out_mem_5115;
+        (*out0)->shape[0] = out_arrsizze_5116;
+    }
+    lock_unlock(&ctx->lock);
+    return ret;
 }
