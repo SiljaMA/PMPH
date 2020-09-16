@@ -182,7 +182,7 @@ scanIncWarp( volatile typename OP::RedElTp* ptr, const unsigned int idx ) {
     const unsigned int lane = idx & (WARP-1);
     
     for(unsigned int d = 0; d < lgWARP; d++){
-        unsigned int h = i << d; 
+        unsigned int h = pow(2,d); 
         if (lane >= h){
             ptr[lane] = OP:: apply ptr[lane - h] ptr[lane];  
         }
