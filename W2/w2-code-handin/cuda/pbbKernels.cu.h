@@ -224,7 +224,9 @@ scanIncBlock(volatile typename OP::RedElTp* ptr, const unsigned int idx) {
     //   the first warp. This works because
     //   warp size = 32, and 
     //   max block size = 32^2 = 1024
-    if (lane == (WARP-1)) { ptr[warpid] = OP::remVolatile(ptr[idx]); } 
+    if (lane == (WARP-1) && warpid != 31) { 
+        ptr[warpid] = OP::remVolatile(ptr[idx]); 
+    } 
     __syncthreads();
 
     // 3. scan again the first warp
@@ -442,7 +444,7 @@ copyFromGlb2ShrMem( const uint32_t glb_offs
 ) {
     #pragma unroll
     for(uint32_t i=0; i<CHUNK; i++) {
-        uint32_t loc_ind = i* blockDim.x + threadIdx.x;/*threadIdx.x + CHUNK*i; */
+        uint32_t loc_ind = i* blockDim.x + threadIdx.x; 
         uint32_t glb_ind = glb_offs + loc_ind;
         T elm = ne;
         if(glb_ind < N) { elm = d_inp[glb_ind]; }
