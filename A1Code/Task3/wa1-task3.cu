@@ -148,9 +148,10 @@ unsigned long int runs;
         printf("Average time for gpu: %.2fms\n", gpu_time/runs);
         printf("Average time for cpu: %.2fms\n", cpu_time/runs);
 
-        if(!((gpu_time/runs) <= (cpu_time/runs))){
+        if((cpu_time/runs) < (gpu_time/runs)){
             cpuisfaster = false;
         }else{
+            cpuisfaster = true;
             N++; 
         }
         printf("%d", cpuisfaster);
