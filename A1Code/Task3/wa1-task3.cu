@@ -142,10 +142,10 @@ int runs;
 
         printf("Size of array %d \n", N); 
         printf("Number of runs %d \n", runs);
-        printf("Average time for gpu: %.2fms\n", gpu_time/500.0);
-        printf("Average time for cpu: %.2fms\n", cpu_time/500.0);
+        printf("Average time for gpu: %.2fms\n", gpu_time/runs);
+        printf("Average time for cpu: %.2fms\n", cpu_time/runs);
 
-        if((cpu_time/500.0) < (gpu_time/500.0)){
+        if((cpu_time/runs) < (gpu_time/runs)){
             cpuisfaster = false;
         }else{
             N++; 
