@@ -119,6 +119,8 @@ unsigned int N; //sæt tilbage til 753411
 
         cpu_time = cpu_time + elapsed_cpu; 
         gpu_time = gpu_time + elapsed_gpu;
+        printf("%d \n", gpu_time);
+        printf("%d\n", cpu_time);
 
         //clean-up memory
         free(h_in);
@@ -129,8 +131,8 @@ unsigned int N; //sæt tilbage til 753411
 
     }
 
-    printf("Average time for gpu: %d", gpu_time/500.0);
-    printf("Average time for cpu: %d", cpu_time/500.0);
+    printf("Average time for gpu: %d\n", gpu_time/500.0);
+    printf("Average time for cpu: %d\n", cpu_time/500.0);
 
 
     return 0; 
