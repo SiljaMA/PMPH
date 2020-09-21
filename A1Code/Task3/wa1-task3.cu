@@ -43,8 +43,8 @@ unsigned int N; //sæt tilbage til 753411
         N = atoi(argv[1]); 
     }
 
-    unsigned long int cpu_time 0; 
-    unsigned long int gpu_time 0; 
+    unsigned long int cpu_time = 0; 
+    unsigned long int gpu_time = 0; 
     for(int run = 1; run < 500; run++){
         unsigned int mem_size = N*sizeof(float); 
         unsigned int block_size = 256; 
