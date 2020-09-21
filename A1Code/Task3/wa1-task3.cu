@@ -43,8 +43,8 @@ unsigned int N;
 unsigned long int runs; 
     if(argc != 3){
         printf("Missing value for N and runs.\n"); 
-        N = 100;//sæt tilbage til 753411
-        runs = 2; 
+        N = 753411;//sæt tilbage til 753411
+        runs = 200; 
         printf("Using default-values N = %d runs = %d\n", N, runs); 
     }else {
         N = atoi(argv[1]); 
