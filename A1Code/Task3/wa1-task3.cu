@@ -142,8 +142,8 @@ int runs;
     unsigned long int elems_per_msek_gpu = N/gpu_time;
     unsigned long int elems_per_msek_cpu = N/cpu_time;
 
-    printf("Numer of elements pr. microseconds m%.2fms\n for gpu", elems_per_msek_gpu);
-    printf("Numer of elements pr. microseconds m%.2fms\n for cpu", elems_per_msek_cpu);
+    printf("Numer of elements pr. ms m%.2f for gpu\n", elems_per_msek_gpu);
+    printf("Numer of elements pr. ms m%.2f for cpu\n", elems_per_msek_cpu);
 
 
     return 0; 
