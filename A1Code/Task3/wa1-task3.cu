@@ -33,6 +33,7 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
     return (diff <0); 
 }
 
+
 int main(int argc, char *argv[]){
     unsigned int N; //sæt tilbage til 753411
     if(argc != 2){
@@ -119,7 +120,17 @@ int main(int argc, char *argv[]){
     free(gpu_res); 
     cudaFree(d_in);
     cudaFree(d_out);
- 
+
+
+    FILE *fptr_gpu;
+    fptr_gpu = fopen("C:\\Users\\SMK\\Desktop\\resultFromTask2\\gpures.txt","w");
+    fprintf(fptr_gpu,"%d",elapsed_gpu);
+    fclose(fptr_gpu);
+
+    FILE *fptr_cpu;
+    fptr_cpu = fopen("C:\\Users\\SMK\\Desktop\\resultFromTask2\\cpures.txt","w");
+    fprintf(fptr_cpu,"%d",elapsed_cpu);
+    fclose(fptr_cpu);
 
 
     return 0; 
