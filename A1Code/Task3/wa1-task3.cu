@@ -40,7 +40,7 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
 
 int main(int argc, char *argv[]){
     unsigned int N; 
-    unsigned long int runs; 
+    float runs; 
     if(argc != 3){
         printf("Missing value for N and runs.\n"); 
         N = 753411;//sæt tilbage til 753411
@@ -140,8 +140,8 @@ int main(int argc, char *argv[]){
 
     printf("Size of array %d \n", N); 
     printf("Number of runs %d \n", runs);
-    printf("Average time for gpu: %.2fms\n", gpu_time/200.0);
-    printf("Average time for cpu: %.2fms\n", cpu_time/200.0);
+    printf("Average time for gpu: %.2fms\n", gpu_time/runs);
+    printf("Average time for cpu: %.2fms\n", cpu_time/runs);
 
 
     return 0; 
