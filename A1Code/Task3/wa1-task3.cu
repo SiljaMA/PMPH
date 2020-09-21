@@ -151,6 +151,8 @@ unsigned long int runs;
         }else{
             N++; 
         }
+        printf("%b", cpuisfaster);
+
     }
 
     printf("%d", N); 
