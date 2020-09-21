@@ -43,6 +43,8 @@ unsigned int N; //sæt tilbage til 753411
         N = atoi(argv[1]); 
     }
 
+    unsigned long int cpu_time 0; 
+    unsigned long int gpu_time 0; 
     for(int run = 1; run < 500; run++){
         unsigned int mem_size = N*sizeof(float); 
         unsigned int block_size = 256; 
@@ -115,6 +117,9 @@ unsigned int N; //sæt tilbage til 753411
         printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
 
 
+        cpu_time = cpu_time + elapsed_cpu; 
+        gpu_time = gpu_time + elapsed_gpu;
+
         //clean-up memory
         free(h_in);
         free(cpu_res);
@@ -123,6 +128,10 @@ unsigned int N; //sæt tilbage til 753411
         cudaFree(d_out);
 
     }
+
+    printf("Average time for gpu: %d", gpu_time/500.0);
+    printf("Average time for cpu: %d", cpu_time/500.0);
+
 
     return 0; 
 }
