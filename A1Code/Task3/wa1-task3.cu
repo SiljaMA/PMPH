@@ -131,8 +131,8 @@ unsigned int N; //sæt tilbage til 753411
 
     }
 
-    printf("Average time for gpu: %d\n", gpu_time/500.0);
-    printf("Average time for cpu: %d\n", cpu_time/500.0);
+    printf("Average time for gpu: %.2fms\n", gpu_time/500.0);
+    printf("Average time for cpu: %.2fms\n", cpu_time/500.0);
 
 
     return 0; 
