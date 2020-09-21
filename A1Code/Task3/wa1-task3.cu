@@ -40,7 +40,7 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
 
 int main(int argc, char *argv[]){
 unsigned int N; 
-int runs; 
+unsigned long int runs; 
     if(argc != 3){
         printf("Missing value for N and runs.\n"); 
         N = 100;//sæt tilbage til 753411
