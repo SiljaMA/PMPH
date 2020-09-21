@@ -22,7 +22,7 @@ __global__ void squareKernel(float* d_in, float* d_out, int N){
     const unsigned int lid = threadIdx.x; 
     const unsigned int gid = blockIdx.x*blockDim.x + lid; 
     if(gid < N){
-        float x = d_in[i]/(d_in[i]-2.3);
+        float x = d_in[gid]/(d_in[gid]-2.3);
         d_out[gid] = x*x*x;
         /*pow(d_in[gid]/(d_in[gid]-2.3), 3)*/
     }
