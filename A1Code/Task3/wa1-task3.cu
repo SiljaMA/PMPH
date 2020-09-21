@@ -54,6 +54,7 @@ unsigned long int runs;
     bool cpuisfaster = true;
 
     while(cpuisfaster){
+        printf("Size of array: %d", N);
         unsigned long int cpu_time = 0; 
         unsigned long int gpu_time = 0; 
         for(int run = 1; run < runs; run++){
