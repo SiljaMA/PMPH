@@ -120,12 +120,12 @@ int runs;
             //time for kernel gpu
             timeval_substract(&t_diff_gpu, &t_end_gpu, &t_start_gpu); 
             elapsed_gpu = (t_diff_gpu.tv_sec*1e6+t_diff_gpu.tv_usec); 
-            //printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
+            printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
 
             //Time for serial on cpu
             timeval_substract(&t_diff_cpu, &t_end_cpu, &t_start_cpu); 
             elapsed_cpu = (t_diff_cpu.tv_sec*1e6+t_diff_cpu.tv_usec); 
-            //printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
+            printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
 
 
             cpu_time = cpu_time + elapsed_cpu; 
