@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
         printf("Average time for gpu: %.2fms\n", gpu_time/runs);
         printf("Average time for cpu: %.2fms\n", cpu_time/runs);
 
-        if((gpu_time/runs)) < (cpu_time/runs))){
+        if((gpu_time/runs) < (cpu_time/runs)){
             isnotfaster = false;
         }else{
             N++; 
