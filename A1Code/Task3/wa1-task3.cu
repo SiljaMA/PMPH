@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
         printf("Missing value for N and runs.\n"); 
         N = 753411;//sæt tilbage til 753411
         runs = 200; 
-        printf("Using default-values N = %d runs = %d\n", N, runs); 
+        printf("Using default-values N = %d runs = %d \n", N, runs); 
     }else {
         N = atoi(argv[1]); 
         runs = atoi(argv[2]); 
