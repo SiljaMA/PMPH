@@ -11,7 +11,8 @@
 //Calculates (x/x-2.3)^3 serial for every x in the array using the cpu
 void squareSerial(float* d_in, float* d_out, int N){
     for (unsigned int i = 0; i < N; ++i){
-        d_out[i] = pow(d_in[i]/(d_in[i]-2.3), 3);
+        d_out[i] = (d_in[gid]/(d_in[gid]-2.3))*(d_in[gid]/(d_in[gid]-2.3))*(d_in[gid]/(d_in[gid]-2.3));
+        /*pow(d_in[i]/(d_in[i]-2.3), 3)*/
     }
 }
 
@@ -20,7 +21,8 @@ __global__ void squareKernel(float* d_in, float* d_out, int N){
     const unsigned int lid = threadIdx.x; 
     const unsigned int gid = blockIdx.x*blockDim.x + lid; 
     if(gid < N){
-        d_out[gid] = pow(d_in[gid]/(d_in[gid]-2.3), 3);
+        d_out[gid] = (d_in[gid]/(d_in[gid]-2.3))*(d_in[gid]/(d_in[gid]-2.3))*(d_in[gid]/(d_in[gid]-2.3));
+        /*pow(d_in[gid]/(d_in[gid]-2.3), 3)*/
     }
 }
 
