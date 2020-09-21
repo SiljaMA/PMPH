@@ -69,54 +69,66 @@ int main(int argc, char *argv[]){
     //copy host memory to device
     cudaMemcpy(d_in, h_in, mem_size, cudaMemcpyHostToDevice);
 
-    //starts the time for the gpu
-    gettimeofday(&t_start_gpu, NULL); 
-    //execute the kernel and calculates the square using gpu 
-    squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
-    //waits for the gpu to finish, so we can calculate the exact time 
-    cudaDeviceSynchronize(); 
-    //ends the time for the gpu
-    gettimeofday(&t_end_gpu, NULL); 
+    unsigned long int avtimecpu = 0;
+    unsigned long int avtimegpu = 0; 
+    for(int run = 1; run > 500; ++run){
+        //starts the time for the gpu
+        gettimeofday(&t_start_gpu, NULL); 
+        //execute the kernel and calculates the square using gpu 
+        squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
+        //waits for the gpu to finish, so we can calculate the exact time 
+        cudaDeviceSynchronize(); 
+        //ends the time for the gpu
+        gettimeofday(&t_end_gpu, NULL); 
 
-    //copy result from device to host
-    cudaMemcpy(gpu_res, d_out, mem_size, cudaMemcpyDeviceToHost);
+        //copy result from device to host
+        cudaMemcpy(gpu_res, d_out, mem_size, cudaMemcpyDeviceToHost);
 
-    //starts the time for cpu
-    gettimeofday(&t_start_cpu, NULL); 
-    //Calculates squareSerial using the cpu
-    squareSerial(h_in, cpu_res, N); 
-    //ends the time for the cpu
-    gettimeofday(&t_end_cpu, NULL); 
+        //starts the time for cpu
+        gettimeofday(&t_start_cpu, NULL); 
+        //Calculates squareSerial using the cpu
+        squareSerial(h_in, cpu_res, N); 
+        //ends the time for the cpu
+        gettimeofday(&t_end_cpu, NULL); 
 
 
-    //Checks the results are the same    
-    int valid, invalid;
-    valid = invalid = 0; 
-    for (unsigned int j = 0; j < N; ++j){
-        if(fabs(cpu_res[j] - gpu_res[j]) < 0.0001){
-            valid++;
-        }else{
-            invalid++;
+        //Checks the results are the same    
+        int valid, invalid;
+        valid = invalid = 0; 
+        for (unsigned int j = 0; j < N; ++j){
+            if(fabs(cpu_res[j] - gpu_res[j]) < 0.0001){
+                valid++;
+            }else{
+                invalid++;
+            }
         }
+        printf("Valid: %d, Invalid: %d \n", valid, invalid);
+
+        //time for kernel gpu
+        timeval_substract(&t_diff_gpu, &t_end_gpu, &t_start_gpu); 
+        elapsed_gpu = (t_diff_gpu.tv_sec*1e6+t_diff_gpu.tv_usec); 
+        printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
+
+        //Time for serial on cpu
+        timeval_substract(&t_diff_cpu, &t_end_cpu, &t_start_cpu); 
+        elapsed_cpu = (t_diff_cpu.tv_sec*1e6+t_diff_cpu.tv_usec); 
+        printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
+
+        avtimecpu = avtimecpu + elapsed_cpu; 
+        avtimegpu = avtimegpu + elapsed_gpu;
+
+        //clean-up memory
+        free(h_in);
+        free(cpu_res);
+        free(gpu_res); 
+        cudaFree(d_in);
+        cudaFree(d_out);
     }
-    printf("Valid: %d, Invalid: %d \n", valid, invalid);
+    avtimecpu = avtimecpu/500; 
+    avtimegpu = avtimegpu/500; 
+    printf("Average-run time for cpu %d \n", avtimecpu); 
+    printf("Average-run time for gpu %d \n", avtimegpu); 
 
-    //time for kernel gpu
-    timeval_substract(&t_diff_gpu, &t_end_gpu, &t_start_gpu); 
-    elapsed_gpu = (t_diff_gpu.tv_sec*1e6+t_diff_gpu.tv_usec); 
-    printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
-
-    //Time for serial on cpu
-    timeval_substract(&t_diff_cpu, &t_end_cpu, &t_start_cpu); 
-    elapsed_cpu = (t_diff_cpu.tv_sec*1e6+t_diff_cpu.tv_usec); 
-    printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
-
-    //clean-up memory
-    free(h_in);
-    free(cpu_res);
-    free(gpu_res); 
-    cudaFree(d_in);
-    cudaFree(d_out);
 
     return 0; 
 }
