@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
         printf("Missing value for N and runs.\n"); 
         N = 753411;//sæt tilbage til 753411
         runs = 200; 
-        printf("Using default-values N = %d runs = %d \n", N, runs); 
+        printf("Using default-values N = %d runs = %.6f \n", N, runs); 
     }else {
         N = atoi(argv[1]); 
         runs = atoi(argv[2]); 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]){
     }
 
     printf("Size of array %d \n", N); 
-    printf("Number of runs %d \n", runs);
+    printf("Number of runs %.6f \n", runs);
     printf("Average time for gpu: %.2fms\n", gpu_time/runs);
     printf("Average time for cpu: %.2fms\n", cpu_time/runs);
 
