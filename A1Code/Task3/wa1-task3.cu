@@ -137,14 +137,10 @@ int runs;
 
     }
 
+    printf("Size of array %d \n", N); 
+    printf("Number of runs %d \n", runs);
     printf("Average time for gpu: %.2fms\n", gpu_time/500.0);
     printf("Average time for cpu: %.2fms\n", cpu_time/500.0);
-    unsigned long int elems_per_msek_gpu = N/gpu_time;
-    unsigned long int elems_per_msek_cpu = N/cpu_time;
-
-    printf("Numer of elements pr. ms m%.2f for gpu\n", elems_per_msek_gpu);
-    printf("Numer of elements pr. ms m%.2f for cpu\n", elems_per_msek_cpu);
-
 
     return 0; 
 }
