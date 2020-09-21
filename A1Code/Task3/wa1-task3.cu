@@ -112,8 +112,6 @@ int main(int argc, char *argv[]){
     elapsed_cpu = (t_diff_cpu.tv_sec*1e6+t_diff_cpu.tv_usec); 
     printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
 
-    avtimecpu = avtimecpu + elapsed_cpu; 
-    avtimegpu = avtimegpu + elapsed_gpu;
 
     //clean-up memory
     free(h_in);
