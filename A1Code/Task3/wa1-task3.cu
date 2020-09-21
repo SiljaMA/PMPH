@@ -40,16 +40,20 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
 
 int main(int argc, char *argv[]){
 unsigned int N; //sæt tilbage til 753411
+int runs; 
     if(argc != 2){
-        printf("Missing value for N \n"); 
+        printf("Missing value for N and runs.\n"); 
         N = 753411;
+        runs = 500; 
+        printf("Using default-values N = %d runs = %d\n", N, runs); 
     }else {
         N = atoi(argv[1]); 
+        runs = atoi(argv[2]); 
     }
 
     unsigned long int cpu_time = 0; 
     unsigned long int gpu_time = 0; 
-    for(int run = 1; run < 500; run++){
+    for(int run = 1; run < runs; run++){
         unsigned int mem_size = N*sizeof(float); 
         unsigned int block_size = 256; 
         unsigned int num_blocks = ((N + (block_size -1))/block_size); 
@@ -108,23 +112,21 @@ unsigned int N; //sæt tilbage til 753411
                 invalid++;
             }
         }
-        printf("Valid: %d, Invalid: %d \n", valid, invalid);
+        //printf("Valid: %d, Invalid: %d \n", valid, invalid);
 
         //time for kernel gpu
         timeval_substract(&t_diff_gpu, &t_end_gpu, &t_start_gpu); 
         elapsed_gpu = (t_diff_gpu.tv_sec*1e6+t_diff_gpu.tv_usec); 
-        printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
+        //printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
 
         //Time for serial on cpu
         timeval_substract(&t_diff_cpu, &t_end_cpu, &t_start_cpu); 
         elapsed_cpu = (t_diff_cpu.tv_sec*1e6+t_diff_cpu.tv_usec); 
-        printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
+        //printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
 
 
         cpu_time = cpu_time + elapsed_cpu; 
         gpu_time = gpu_time + elapsed_gpu;
-        printf("%d \n", gpu_time);
-        printf("%d\n", cpu_time);
 
         //clean-up memory
         free(h_in);
