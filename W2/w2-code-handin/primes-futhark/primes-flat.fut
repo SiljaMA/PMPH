@@ -34,6 +34,9 @@ let primesFlat (n : i32) : []i32 =
       --
       
       let not_primes = replicate flat_size 0
+      let composite = map (\ p -> let mm1 = (len / p) - 1
+      in  map (\ j -> j * p ) (map (+2) (iota mm1))) sq_primes
+      let not_primes = reduce (++) [] composite
 
       -- If not_primes is correctly computed, then the remaining
       -- code is correct and will do the job of computing the prime

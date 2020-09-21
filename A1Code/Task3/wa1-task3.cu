@@ -73,6 +73,8 @@ int main(int argc, char *argv[]){
     gettimeofday(&t_start_gpu, NULL); 
     //execute the kernel and calculates the square using gpu 
     squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
+    //waits for the gpu to finish, so we can calculate the exact time 
+    cudaDeviceSynchronize(); 
     //ends the time for the gpu
     gettimeofday(&t_end_gpu, NULL); 
 
