@@ -35,7 +35,7 @@ int timeval_substract(struct timeval* result, struct timeval* t2, struct timeval
 
 
 int main(int argc, char *argv[]){
-    unsigned int N; //sæt tilbage til 753411
+unsigned int N; //sæt tilbage til 753411
     if(argc != 2){
         printf("Missing value for N \n"); 
         N = 753411;
@@ -43,95 +43,86 @@ int main(int argc, char *argv[]){
         N = atoi(argv[1]); 
     }
 
-    unsigned int mem_size = N*sizeof(float); 
-    unsigned int block_size = 256; 
-    unsigned int num_blocks = ((N + (block_size -1))/block_size); 
+    for(int run = 1; run < 500; i++){
+        unsigned int mem_size = N*sizeof(float); 
+        unsigned int block_size = 256; 
+        unsigned int num_blocks = ((N + (block_size -1))/block_size); 
 
-    //For measure the time 
-    unsigned long int elapsed_gpu; struct timeval t_start_gpu, t_end_gpu, t_diff_gpu;  
-    unsigned long int elapsed_cpu; struct timeval t_start_cpu, t_end_cpu, t_diff_cpu;  
+        //For measure the time 
+        unsigned long int elapsed_gpu; struct timeval t_start_gpu, t_end_gpu, t_diff_gpu;  
+        unsigned long int elapsed_cpu; struct timeval t_start_cpu, t_end_cpu, t_diff_cpu;  
 
-    //allocates memory for the arrays
-    float* h_in = (float*) malloc(mem_size);
-    float* gpu_res = (float*) malloc(mem_size);
-    float* cpu_res = (float*) malloc(mem_size);
+        //allocates memory for the arrays
+        float* h_in = (float*) malloc(mem_size);
+        float* gpu_res = (float*) malloc(mem_size);
+        float* cpu_res = (float*) malloc(mem_size);
 
-    //initialize the memory
-    for(unsigned int i = 0; i <N; ++i){
-            h_in[i] = float(i);
-    }
-
-    //allocate device memory
-    float* d_in;
-    float* d_out;
-    cudaMalloc((void**)&d_in, mem_size);
-    cudaMalloc((void**)&d_out, mem_size);
-
-    //copy host memory to device
-    cudaMemcpy(d_in, h_in, mem_size, cudaMemcpyHostToDevice);
-
- 
-    //starts the time for the gpu
-    gettimeofday(&t_start_gpu, NULL); 
-    //execute the kernel and calculates the square using gpu 
-    squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
-    //waits for the gpu to finish, so we can calculate the exact time 
-    cudaDeviceSynchronize(); 
-    //ends the time for the gpu
-    gettimeofday(&t_end_gpu, NULL); 
-
-    //copy result from device to host
-    cudaMemcpy(gpu_res, d_out, mem_size, cudaMemcpyDeviceToHost);
-
-    //starts the time for cpu
-    gettimeofday(&t_start_cpu, NULL); 
-    //Calculates squareSerial using the cpu
-    squareSerial(h_in, cpu_res, N); 
-    //ends the time for the cpu
-    gettimeofday(&t_end_cpu, NULL); 
-
-
-    //Checks the results are the same    
-    int valid, invalid;
-    valid = invalid = 0; 
-    for (unsigned int j = 0; j < N; ++j){
-        if(fabs(cpu_res[j] - gpu_res[j]) < 0.0001){
-            valid++;
-        }else{
-            invalid++;
+        //initialize the memory
+        for(unsigned int i = 0; i <N; ++i){
+                h_in[i] = float(i);
         }
+
+        //allocate device memory
+        float* d_in;
+        float* d_out;
+        cudaMalloc((void**)&d_in, mem_size);
+        cudaMalloc((void**)&d_out, mem_size);
+
+        //copy host memory to device
+        cudaMemcpy(d_in, h_in, mem_size, cudaMemcpyHostToDevice);
+
+
+        //starts the time for the gpu
+        gettimeofday(&t_start_gpu, NULL); 
+        //execute the kernel and calculates the square using gpu 
+        squareKernel <<<num_blocks, block_size>>>(d_in, d_out, N);
+        //waits for the gpu to finish, so we can calculate the exact time 
+        cudaDeviceSynchronize(); 
+        //ends the time for the gpu
+        gettimeofday(&t_end_gpu, NULL); 
+
+        //copy result from device to host
+        cudaMemcpy(gpu_res, d_out, mem_size, cudaMemcpyDeviceToHost);
+
+        //starts the time for cpu
+        gettimeofday(&t_start_cpu, NULL); 
+        //Calculates squareSerial using the cpu
+        squareSerial(h_in, cpu_res, N); 
+        //ends the time for the cpu
+        gettimeofday(&t_end_cpu, NULL); 
+
+
+        //Checks the results are the same    
+        int valid, invalid;
+        valid = invalid = 0; 
+        for (unsigned int j = 0; j < N; ++j){
+            if(fabs(cpu_res[j] - gpu_res[j]) < 0.0001){
+                valid++;
+            }else{
+                invalid++;
+            }
+        }
+        printf("Valid: %d, Invalid: %d \n", valid, invalid);
+
+        //time for kernel gpu
+        timeval_substract(&t_diff_gpu, &t_end_gpu, &t_start_gpu); 
+        elapsed_gpu = (t_diff_gpu.tv_sec*1e6+t_diff_gpu.tv_usec); 
+        printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
+
+        //Time for serial on cpu
+        timeval_substract(&t_diff_cpu, &t_end_cpu, &t_start_cpu); 
+        elapsed_cpu = (t_diff_cpu.tv_sec*1e6+t_diff_cpu.tv_usec); 
+        printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
+
+
+        //clean-up memory
+        free(h_in);
+        free(cpu_res);
+        free(gpu_res); 
+        cudaFree(d_in);
+        cudaFree(d_out);
+
     }
-    printf("Valid: %d, Invalid: %d \n", valid, invalid);
-
-    //time for kernel gpu
-    timeval_substract(&t_diff_gpu, &t_end_gpu, &t_start_gpu); 
-    elapsed_gpu = (t_diff_gpu.tv_sec*1e6+t_diff_gpu.tv_usec); 
-    printf("GPU took %d microseconds (%.2fms)\n", elapsed_gpu, elapsed_gpu/1000.0);
-
-    //Time for serial on cpu
-    timeval_substract(&t_diff_cpu, &t_end_cpu, &t_start_cpu); 
-    elapsed_cpu = (t_diff_cpu.tv_sec*1e6+t_diff_cpu.tv_usec); 
-    printf("CPU took %d microseconds (%.2fms)\n", elapsed_cpu, elapsed_cpu/1000.0);
-
-
-    //clean-up memory
-    free(h_in);
-    free(cpu_res);
-    free(gpu_res); 
-    cudaFree(d_in);
-    cudaFree(d_out);
-
-
-    FILE *fptr_gpu;
-    fptr_gpu = fopen("C:\\Users\\SMK\\Desktop\\resultFromTask2\\gpures.txt","w");
-    fprintf(fptr_gpu,"%d",elapsed_gpu);
-    fclose(fptr_gpu);
-
-    FILE *fptr_cpu;
-    fptr_cpu = fopen("C:\\Users\\SMK\\Desktop\\resultFromTask2\\cpures.txt","w");
-    fprintf(fptr_cpu,"%d",elapsed_cpu);
-    fclose(fptr_cpu);
-
 
     return 0; 
 }
