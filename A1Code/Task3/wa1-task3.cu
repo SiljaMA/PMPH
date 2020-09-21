@@ -140,8 +140,8 @@ int main(int argc, char *argv[]){
 
     printf("Size of array %d \n", N); 
     printf("Number of runs %d \n", runs);
-    printf("Average time for gpu: %.2fms\n", gpu_time/runs);
-    printf("Average time for cpu: %.2fms\n", cpu_time/runs);
+    printf("Average time for gpu: %.2fms\n", gpu_time/200.0);
+    printf("Average time for cpu: %.2fms\n", cpu_time/200.0);
 
 
     return 0; 
