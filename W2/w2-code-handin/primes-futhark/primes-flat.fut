@@ -4,7 +4,7 @@
 -- compiled input { 10000000i32 } auto output
 
 -- segmented scan with (+) on floats:
-let sgmSum [n] (flg : [n]i32) (arr : [n]I32) : [n]I32 =
+let sgmSum [n] (flg : [n]i32) (arr : [n]i32) : [n]i32 =
   let flgs_vals = 
     scan ( \ (f1, x1) (f2,x2) -> 
             let f = f1 | f2 in
