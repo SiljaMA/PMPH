@@ -22,8 +22,8 @@ let primesFlat (n : i32) : []i32 =
       --       code that is equivalent with the nested-parallel one:
 
         --let composite = map (\ p -> let mm1 = (len / p) - 1
-          --                           in  map (\ j -> j * p ) (map (+2) (iota mm1))
-          --                   ) sq_primes
+           --                          in  map (\ j -> j * p ) (map (+2) (iota mm1))
+             --                ) sq_primes
          --let not_primes = reduce (++) [] composite
       --
       -- Your code should compute the right `not_primes`
@@ -35,13 +35,23 @@ let primesFlat (n : i32) : []i32 =
       --
       
       let compite = 
-        map(\p ->
-          let mm1 = ((len/p) - 1)
-          let iot = iota mm1 
-          let iot_two = map (+2) iot 
-          in map(\(p,j) -> j*p) iot_two
-        )sq_primes
-      let not_primes = reduce (++) [] composite
+        let mm1s = map (\p -> (len/p) - 1) sq_primes
+        let iots = map (\p -> (iota p)) mm1s
+        let two_iots = map(\p -> p + 2) iots
+        let rps = map(\p -> (replicate mm1 p)) sq_primes
+        in map(\(j,p) -> j*p) (zip two_iots rps)
+        let not_primes = reduce (++) [] composite
+
+
+
+        --map(\p ->
+          --let mm1 = ((len/p) - 1)
+          --let iot = iota mm1 
+          --let iot_two = map (+2) iot 
+
+
+          --in map(\(p,j) -> j*p) iot_two
+        -- )sq_primes
 
       -- If not_primes is correctly computed, then the remaining
       -- code is correct and will do the job of computing the prime
