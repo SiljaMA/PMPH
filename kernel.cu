@@ -2,13 +2,19 @@
 #include "device_launch_parameters.h"
 
 
-
+//global laver en funktion om til en kernel - noget der kører på cpu'en 
+//bliver executet med <<<dim3>>>arguments. 
 __global__ void addIndex(int* a, int* b, int* c){
     //index, der fortæller hvilken thread vi executer kode i
     //hver thread executer en blok
     int i = threadIdx.x; 
     c[i] = a[i] + b[i]; 
 }
+
+
+//device kører på gpuen og kan kun kaldes derfra 
+
+//host kører på cpu'en 
 
 
 void main(){
@@ -26,17 +32,16 @@ void main(){
     cudaMalloc(&db, size); 
     cudaMalloc(&dc, size); 
 
-    //kopier koden fra ha til da osv
+    //kopier koden fra ha til da osv - dvs koden fra cpu'en til gpu'en
     cudaMemcpy(da, ha, size, cudaMemcpyKind:: cudaMemcpyHostToDevice);
     cudaMemcpy(db, hb, size, cudaMemcpyKind:: cudaMemcpyHostToDevice);
-    cudaMemcpy(dc, hc, size, cudaMemcpyKind:: cudaMemcpyHostToDevice);
 
+    //fortæller hvor mange blokke gpuen skal køre med
+    addArrays<<<1, count>>>(da, db, dc);
 
+    //kopiere resultet tilbage
+    cudaMemcpy(hc, dc, size, cudaMemcpyKind:: cudaMemcpyDeviceToHost);
 
-    //simulere processen 
-    for(int i = 0; i <count; ++i){
-        addIndex(a, b, c); 
-    }
 
 
 }
