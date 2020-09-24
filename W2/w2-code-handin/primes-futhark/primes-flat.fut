@@ -56,7 +56,7 @@ let primesFlat (n : i32) : []i32 =
       
       let flagones = map(\i -> if i == 0 then 0 else 1) flags 
       let scanflag = scan (+) 0 flagones
-      let primes = map(\i -> sq_primes[i]) scanflag
+      let primes = map(\i -> sq_primes[i-1]) scanflag
       let not_primes = map2 (*) mmp2 primes 
 
 
