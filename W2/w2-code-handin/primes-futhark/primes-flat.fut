@@ -39,7 +39,7 @@ let primesFlat (n : i32) : []i32 =
           let mm1 = ((len/p) - 1)
           let iot = iota mm1 
           let iot_two = map (+2) iot 
-          let inner = map(\(p,j) -> j*p) iot_two
+          in map(\(p,j) -> j*p) iot_two
         )sq_primes
       let not_primes = reduce (++) [] composite
 
