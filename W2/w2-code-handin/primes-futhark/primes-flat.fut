@@ -3,6 +3,17 @@
 -- compiled input { 30 } output { [2,3,5,7,11,13,17,19,23,29] }
 -- compiled input { 10000000i32 } auto output
 
+-- segmented scan with (+) on floats:
+let sgmSum [n] (flg : [n]i32) (arr : [n]I32) : [n]I32 =
+  let flgs_vals = 
+    scan ( \ (f1, x1) (f2,x2) -> 
+            let f = f1 | f2 in
+            if f2 > 0 then (f, x2)
+            else (f, x1 + x2) )
+         (0,0) (zip flg arr)
+  let (_, vals) = unzip flgs_vals
+  in vals
+
 let primesFlat (n : i32) : []i32 =
   let sq_primes   = [2,3,5,7]
   let len  = 8
@@ -33,25 +44,21 @@ let primesFlat (n : i32) : []i32 =
       --  and the result is in "mult_lens", but it stores `len / p - 1`,
       --  where `p \in sq_primes`.
       --
+
+      let mm1s = map (\p -> (len/p) - 1) sq_primes
+      let shp_mm = scan (+) 0 mm1s 
+      let shp = map(\i -> if i == 0 then 0 else shp_mm[i - 1]) (indices shp_mm)
+      let zeros = replicate flat_size 0  
+      let flags = scatter zeros shp sq_primes 
+      let ones = replicate flat_size 1
+      let seg = sgmSum flags ones 
+      let mmp2 = map (+1) seg
       
-      let compite = 
-        let mm1s = map (\p -> (len/p) - 1) sq_primes
-        let iots = map (\p -> (iota p)) mm1s
-        let two_iots = map(\p -> p + 2) iots
-        let rps = map(\p -> (replicate mm1 p)) sq_primes
-        in map(\(j,p) -> j*p) (zip two_iots rps)
-        let not_primes = reduce (++) [] composite
+      let flagsones = map(\i -> if i == 0 then 0 else 1) flags 
+      let scanflag = scan (+) 0 flagones
+      let primes = map(\i -> sq_primes[i]) scanflag
+      let not_primes = map2 (*) mmp2 primes 
 
-
-
-        --map(\p ->
-          --let mm1 = ((len/p) - 1)
-          --let iot = iota mm1 
-          --let iot_two = map (+2) iot 
-
-
-          --in map(\(p,j) -> j*p) iot_two
-        -- )sq_primes
 
       -- If not_primes is correctly computed, then the remaining
       -- code is correct and will do the job of computing the prime
