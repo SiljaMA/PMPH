@@ -79,12 +79,12 @@ transfProg(float* Atr, float* Btr, unsigned int N) {
     unsigned int gid = blockIdx.x*blockDim.x + threadIdx.x;
     if(gid < N){
         float accum, tmpA, tempB;
-        accume = 0;
+        accum = 0;
             for (int j = 0; j < 64; j++) { // inner loop
                 tmpA = Atr[gid][j];
-                accume = sqrt(accumArr) + tmpA*tmpA; 
-                Btr[gid][j] = accume;
-                tempB = accume; 
+                accum = sqrt(accum) + tmpA*tmpA; 
+                Btr[gid][j] = accum;
+                tempB = accum; 
             }
     }
 }
