@@ -193,7 +193,7 @@ int weekly3Task3( int height
             // 3.a.3  you probably need to transpose-back the result here
             //        i.e., source array is d_Btr, and transposed result
             //        is in d_B.
-            transposeNaive<float, TILE>(d_Btr, d_B, WIDTH_A, HEIGHT_A); 
+            transposeTiled<float, TILE>(d_Btr, d_B, WIDTH_A, HEIGHT_A); 
         }
         cudaDeviceSynchronize();
 
