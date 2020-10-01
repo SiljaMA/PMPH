@@ -76,6 +76,26 @@ origProg(float* A, float* B, unsigned int N) {
  */
 __global__ void 
 transfProg(float* Atr, float* Btr, unsigned int N) {
+    if(gid < N){
+        accumArr = 0;
+        int i = gid; 
+            for (int j = 0; j < 64; j++) { // inner loop
+                tmpA = Atr[i, j];
+                accumArr = sqrt(accumArr) + tmpA*tmpA; 
+                Btr[i,j] = accumArr;
+            }
+    }
+    /*float accum, tmpA;
+    float accumArr[N, 64]
+    for (int i = 0; i < N; i++) { // outer loop
+        accumArr[i] = 0;
+        for (int j = 0; j < 64; j++) { // inner loop
+            tmpA = Atr[i, j];
+            accumArr[i] = sqrt(accumArr[i]) + tmpA*tmpA; 
+            Btr[i,j] = accumArr[i];
+        }
+    }*/ 
+    //accum = accumArr[N -1]
 }
 
 /**
