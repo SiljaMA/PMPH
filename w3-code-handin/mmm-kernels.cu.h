@@ -92,7 +92,7 @@ __global__ void matMultRegTiledKer(ElTp* A, ElTp* B, ElTp* C, int heightA, int w
     int rowA = ii + ty; 
     int colA = kk + tx; 
     if((rowA < heightA) && (colA < widthA)){
-      Ash[ty][tx] = A[rowA][colA]; 
+      Ash[ty][tx] = A[widthA * rowA + colA]; 
       __syncthreads(); 
       for(int k = 0; k < T; k ++){
         int rowB = kk + k;
