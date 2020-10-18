@@ -71,6 +71,47 @@ template <class ElTp, int T>
 __global__ void matMultRegTiledKer(ElTp* A, ElTp* B, ElTp* C, int heightA, int widthB, int widthA) {
     // ToDo: fill in the kernel implementation of register+block tiled 
     //       matrix-matrix multiplication here
+
+  int ii = blockIdx.y * T; 
+  int jjj = blockIdx.x * T*T; 
+  int jj = threadIdx.y * T + jjj; 
+  int j = jj + threadIdx.x; 
+  int ty = threadIdx.y; 
+  int tx = threadIdx.x; 
+  __shared__ float Ash[T][T]; 
+
+  float cs[T]; 
+  for(int i = 0; i < T){
+    cs[i] = 0.0; 
+  }
+
+  for(int kk = 0; kk < widthA; kk+= T){
+    // Læs fra slice
+    // A[ii:ii+T, kk:kk+T]
+    // Protip, brug tidx og tidy
+    int rowA = ii + ty; 
+    int colA = kk + tx; 
+    if((rowA < heightA) && (colA < widthA)){
+      Ash[ty][tx] = A[rowA][colA]; 
+      __syncthreads(); 
+      for(int k = 0; k < T; k ++){
+        int rowB = kk + k;
+        float b = 0.0; 
+        if ((rowB < widthB) && (j < widthA)){
+          b = B[rowB* widthB + j]; 
+        }
+        for(int i = 0; i < T; i ++){
+          cs[i] = Ash[i][k] *b;         
+        }
+      }
+    }
+  }
+  for(int i = 0; i < T; i ++){
+    int rowC = ii + i; 
+    if (rowC < widthB){
+      C[heightA * (rowC) + j] = cs[i]; 
+    }
+  }
 }
 
 

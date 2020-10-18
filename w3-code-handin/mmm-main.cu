@@ -198,7 +198,7 @@ int main() {
       
       for(int k=0; k<GPU_RUNS; k++) {
           // 2. you would probably want to call here the kernel: 
-          //    "matMultRegTiledKer<float,TILE> <<< grid, block >>>(...)"
+          matMultRegTiledKer<float,TILE> <<< grid, block >>>(d_a, d_B, d_C, HEIGHT_A, WIDTH_B, WIDTH_A); 
       }
       cudaDeviceSynchronize();
 
