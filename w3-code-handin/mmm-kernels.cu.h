@@ -81,7 +81,7 @@ __global__ void matMultRegTiledKer(ElTp* A, ElTp* B, ElTp* C, int heightA, int w
   __shared__ float Ash[T][T]; 
 
   float cs[T]; 
-  for(int i = 0; i < T){
+  for(int i = 0; i < T; i++){
     cs[i] = 0.0; 
   }
 
