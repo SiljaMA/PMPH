@@ -6,9 +6,9 @@
 
 #include "mmm-kernels.cu.h"
 
-#define WIDTH_A  1024//1024 //1024//2048
-#define HEIGHT_A 1024//2048//2048//2048
-#define WIDTH_B  4096//2048
+#define WIDTH_A  2048//1024 //1024//2048
+#define HEIGHT_A 2048//2048//2048//2048
+#define WIDTH_B  2048//2048
 #define TILE     16
 
 #define GPU_RUNS 100
