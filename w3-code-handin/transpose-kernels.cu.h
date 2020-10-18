@@ -80,7 +80,7 @@ transfProg(float* Atr, float* Btr, unsigned int N) {
     if(gid < N){
         float tmpA, tempB;
         float accum = 0.0;
-        unsigned int thd_offs = gid + N;
+        unsigned int thd_offs = gid * N;
             for (int j = 0; j < 64; j++) { 
                 tmpA = Atr[thd_offs + j];
                 accum = sqrt(accum) + tmpA*tmpA; 
