@@ -80,17 +80,17 @@ __global__ void matMultRegTiledKer(ElTp* A, ElTp* B, ElTp* C, int heightA, int w
   int tx = threadIdx.x; 
   __shared__ float Ash[T][T]; 
 
+  //Creating an array to hold the results for the matrix multiplication 
   float cs[T]; 
   for(int i = 0; i < T; i++){
     cs[i] = 0.0f; 
   }
 
   for(int kk = 0; kk < widthA; kk+= T){
-    // Læs fra slice
-    // A[ii:ii+T, kk:kk+T]
     int rowA = ii + ty; 
     int colA = kk + tx; 
     if((rowA < heightA) && (colA < widthB)){
+      //Writes A to shared memory Ash 
       Ash[ty][tx] = A[widthA * rowA + colA];
     }
     else{
@@ -103,6 +103,7 @@ __global__ void matMultRegTiledKer(ElTp* A, ElTp* B, ElTp* C, int heightA, int w
       if ((rowB < widthA) && (j < widthB)){
         b = B[rowB * widthB + j]; 
       }
+      //Calculates the result for one multiplication
       for(int i = 0; i < T; i++){
         cs[i] += Ash[i][k] * b;
       }
@@ -110,6 +111,7 @@ __global__ void matMultRegTiledKer(ElTp* A, ElTp* B, ElTp* C, int heightA, int w
     __syncthreads();
   
   }
+  //Reads the result into C
   for(int i = 0; i < T; i++){
     int rowC = ii + i; 
     if (rowC < heightA && j < widthB){
